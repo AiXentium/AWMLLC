@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /takeoff-login
+Disallow: /takeoff-dashboard

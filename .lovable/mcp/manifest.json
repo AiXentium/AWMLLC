@@ -1,0 +1,229 @@
+{
+  "version": 1,
+  "sdk_version": "0.25.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://aykvxycasuwnpavcunvb.supabase.co/auth/v1",
+    "accepted_audiences": ["authenticated"]
+  },
+  "mcp": {
+    "server": {
+      "name": "awm-takeoff-mcp",
+      "version": "0.1.0",
+      "title": "AWM Takeoff AI"
+    },
+    "tools": [
+      {
+        "name": "list_projects",
+        "title": "List projects",
+        "description": "List AWM Takeoff AI projects visible to the signed-in user, newest first. Optionally filter by status or search by name, code or address.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "search": {
+              "description": "Match against project name, code or address.",
+              "type": "string"
+            },
+            "status": {
+              "description": "Only return projects in this status.",
+              "type": "string",
+              "enum": [
+                "active",
+                "review",
+                "approved",
+                "ready_for_quote",
+                "completed",
+                "on_hold",
+                "archived"
+              ]
+            },
+            "limit": {
+              "description": "Max projects to return (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_project",
+        "title": "Get project detail",
+        "description": "Return the full record for one AWM project — address, jurisdiction and code data, schedule dates and team — plus counts of pages, takeoff items and documents.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Project id from list_projects."
+            }
+          },
+          "required": ["project_id"]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "takeoff_summary",
+        "title": "Summarize takeoff",
+        "description": "Group a project's takeoff items by category and type and return unit totals, so an assistant can report window, door and storefront counts without pulling every row.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Project id from list_projects."
+            }
+          },
+          "required": ["project_id"]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_takeoff_items",
+        "title": "List takeoff items",
+        "description": "List individual takeoff items (marks) for a project, with mark, category, type, size, location and status. Optionally filter by category or mark.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Project id from list_projects."
+            },
+            "category": {
+              "description": "Filter by category, e.g. window, door, storefront.",
+              "type": "string"
+            },
+            "mark": {
+              "description": "Filter by exact schedule mark, e.g. W2.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max items to return (default 50).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          },
+          "required": ["project_id"]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_quote_requests",
+        "title": "List quote requests",
+        "description": "List inbound prospect quote requests from the AWM public website, newest first, with contact, project and status fields.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Filter by request status, e.g. new, in_review, quoted.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max requests to return (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_project",
+        "title": "Create project",
+        "description": "Create a new AWM Takeoff AI project owned by the signed-in user. Use for intake of a new estimate; plans are uploaded in the app afterwards.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "description": "Project name."
+            },
+            "code": {
+              "description": "Internal project code or number.",
+              "type": "string",
+              "maxLength": 60
+            },
+            "project_type": {
+              "description": "e.g. multifamily, single family, commercial.",
+              "type": "string",
+              "maxLength": 80
+            },
+            "address": {
+              "description": "Street address of the jobsite.",
+              "type": "string",
+              "maxLength": 300
+            },
+            "city": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "state": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "postal_code": {
+              "type": "string",
+              "maxLength": 20
+            },
+            "description": {
+              "description": "Scope notes for the estimating team.",
+              "type": "string",
+              "maxLength": 2000
+            }
+          },
+          "required": ["name"]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
