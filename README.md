@@ -1,5 +1,10 @@
 # AWM Coastal Windows
 
+The current deployment uses **Vercel and Supabase**. See
+[Vercel deployment](docs/vercel-deployment.md),
+[Supabase setup](docs/supabase-setup.md), and [.env.example](.env.example)
+for build, environment and database configuration.
+
 Create a completely new and independent Lovable project named “AWM LLC Website & Takeoff Portal.” Do not reuse, import, remix, reference, connect to, or modify Affiliate Preneurs, AiXentium, or any other existing project. This project must have its own isolated codebase, routes, components, product data, branding, login flow, and future backend architecture.
 
 Build a polished production-quality frontend website for AWM LLC (American Windows Manufacturer LLC), a Florida-based supplier/distributor of YKK AP residential windows and patio doors. The public website should be original but visually inspired by the premium, architectural presentation of Renaissance Windows & Doors: large residential imagery, generous whitespace, refined typography, elegant product cards, clear calls to action, and a Florida/coastal construction tone. Do not copy Renaissance branding, text, layout, assets, or trade dress.
@@ -149,4 +154,5 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
 # AWMLLC

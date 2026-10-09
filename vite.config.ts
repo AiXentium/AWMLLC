@@ -29,7 +29,7 @@ if (process.platform === "win32" && mcp.configResolved) {
 export default defineConfig({
   plugins: [mcp],
   nitro: {
-    preset: "cloudflare-module",
+    preset: process.env.NITRO_PRESET || "vercel",
     cloudflare: { nodeCompat: true, deployConfig: false },
   },
   tanstackStart: {

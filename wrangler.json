@@ -7,7 +7,7 @@
   "no_bundle": true,
   "keep_vars": true,
   "build": {
-    "command": "npm run build"
+    "command": "npm run build:cloudflare"
   },
   "assets": {
     "binding": "ASSETS",

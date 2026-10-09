@@ -45,8 +45,8 @@ export function resolveBuildEnvironment(environment, defaults = {}, requireSupab
   if (requireSupabase && (!url || !key)) {
     throw new Error(
       "Missing Supabase build settings. Set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY " +
-        "(or their VITE_ aliases) in Cloudflare Build variables. " +
-        "Set SUPABASE_SERVICE_ROLE_KEY separately as a Worker runtime secret.",
+        "(or their VITE_ aliases) in your hosting environment variables. " +
+        "Set SUPABASE_SERVICE_ROLE_KEY separately as a private server runtime variable.",
     );
   }
   return result;

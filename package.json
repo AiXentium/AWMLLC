@@ -7,9 +7,6 @@
   "scripts": {
     "dev": "vite dev",
     "build": "node scripts/build.mjs",
-    "deploy": "node scripts/build.mjs --check-env && wrangler deploy --config wrangler.json",
-    "deploy:configured": "node scripts/deploy-configured.mjs",
-    "deploy:check": "wrangler deploy --config wrangler.json --dry-run --outdir .wrangler/dry-run",
     "check:env": "node scripts/build.mjs --check-env",
     "test:deployment": "node --test scripts/*.test.mjs",
     "test:database": "node scripts/test-database.mjs",
@@ -24,7 +21,12 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
-    "db:bootstrap": "node scripts/database-bootstrap.mjs"
+    "db:bootstrap": "node scripts/database-bootstrap.mjs",
+    "build:vercel": "node scripts/build.mjs --preset=vercel",
+    "build:cloudflare": "node scripts/build.mjs --preset=cloudflare-module",
+    "deploy:cloudflare": "node scripts/build.mjs --check-env && wrangler deploy --config wrangler.json",
+    "deploy:configured:cloudflare": "node scripts/deploy-configured.mjs",
+    "deploy:check:cloudflare": "wrangler deploy --config wrangler.json --dry-run --outdir .wrangler/dry-run"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^3.0.67",
@@ -122,5 +124,8 @@
     "vite": "^8.3.4",
     "vitest": "^5.0.3",
     "wrangler": "4.149.0"
+  },
+  "engines": {
+    "node": "24.x"
   }
 }

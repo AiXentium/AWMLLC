@@ -75,9 +75,9 @@ Staff must assign organization and project memberships for company users.
 ## Connect the deployed application
 
 The build requires the project's public URL and publishable/legacy anon key.
-The Worker runtime separately requires that public key and its private
+The server runtime separately requires that public key and its private
 service-role/secret key. Use the environment matrix and commands in
-[Cloudflare deployment](cloudflare-deployment.md). Keep Management API tokens,
+[Vercel deployment](vercel-deployment.md). Keep Management API tokens,
 database passwords and service-role keys out of `VITE_` variables.
 
 Check `db:check` for 79 protected tables, three private buckets, no missing

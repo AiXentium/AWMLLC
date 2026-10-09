@@ -1,15 +1,18 @@
-# Deploy AWMLLC to Cloudflare Workers
+# Legacy Cloudflare Workers deployment
+
+The current deployment uses [Vercel and Supabase](vercel-deployment.md).
+This guide covers the retained optional Worker target.
 
 The source entry is `src/server.ts`. TanStack Start and Nitro compile it into
 `.output/server/index.mjs`; `.output/public` contains the browser assets.
 The committed `wrangler.json` names the existing Worker `awmllc` and runs
-`npm run build` before loading that generated entry. This avoids Wrangler's
+`npm run build:cloudflare` before loading that generated entry. This avoids Wrangler's
 framework auto-configuration and its filtered build command.
 
 Use Node.js 24.19.0 (`.nvmrc`) and pnpm 10.34.6 (`packageManager`). Dependencies
 and Wrangler are locked in `pnpm-lock.yaml`. Install with
 `pnpm install --frozen-lockfile`. In Workers Builds, keep the deploy command
-`npx wrangler deploy --config wrangler.json` or use `pnpm run deploy`; the build command is already
+`npx wrangler deploy --config wrangler.json` or use `pnpm run deploy:cloudflare`; the build command is already
 configured in `wrangler.json`. An additional Cloudflare build command is not
 required. Existing dashboard variables are retained with `keep_vars`.
 
@@ -80,15 +83,15 @@ Workers scripts and deployments. A token rolled in Cloudflare must also be
 updated wherever the old token was stored.
 
 If the required runtime secrets already exist in the Worker dashboard, run
-`pnpm run deploy`. Its environment check requires the public build key and
+`pnpm run deploy:cloudflare`. Its environment check requires the public build key and
 Wrangler compiles the configured server entry before uploading.
 
 To upload the two Supabase runtime keys from a directly bound environment
 and deploy together, run:
 
 ```sh
-pnpm run deploy:configured -- --check
-pnpm run deploy:configured
+pnpm run deploy:configured:cloudflare -- --check
+pnpm run deploy:configured:cloudflare
 ```
 
 This command sends encrypted Worker secrets through stdin, without placing
@@ -105,11 +108,11 @@ credentials stay in the deploying process and are not uploaded to the Worker.
 pnpm install --frozen-lockfile
 pnpm run test:deployment
 pnpm run check:env
-pnpm run deploy:check
+pnpm run deploy:check:cloudflare
 pnpm audit
 ```
 
-`deploy:check` compiles the real Worker and runs Wrangler's upload validation
+`deploy:check:cloudflare` compiles the real Worker and runs Wrangler's upload validation
 without publishing. Local compilation without API keys checks build/runtime
 compatibility only; it does not verify authenticated database functionality.
 After deploying, check the homepage, Resources, real sign-in, and a controlled
