@@ -15,6 +15,8 @@ export interface RegisteredResource {
   label: string;
   bytes?: number;
   lastUsed: number;
+  // Resolve resources used within the same millisecond by actual usage order.
+  usageOrder: number;
   createdAt: number;
 }
 
@@ -38,6 +40,7 @@ const RECENTLY_USED_MS = 60_000;
 class MemoryManager {
   private resources = new Map<string, RegisteredResource>();
   private watchersStarted = false;
+  private usageOrder = 0;
   private getActiveId: (() => string | null) | null = null;
 
   register(id: string, dispose: DisposeFn, opts: RegisterOptions = {}): void {
@@ -54,6 +57,7 @@ class MemoryManager {
       label,
       bytes: opts.bytes,
       lastUsed: Date.now(),
+      usageOrder: ++this.usageOrder,
       createdAt: Date.now(),
     });
     this.enforceLru(label);
@@ -62,7 +66,10 @@ class MemoryManager {
 
   touch(id: string): void {
     const r = this.resources.get(id);
-    if (r) r.lastUsed = Date.now();
+    if (r) {
+      r.lastUsed = Date.now();
+      r.usageOrder = ++this.usageOrder;
+    }
   }
 
   unregister(id: string): void {
@@ -117,7 +124,7 @@ class MemoryManager {
   private enforceLru(label: string): void {
     const ofLabel = [...this.resources.values()]
       .filter((r) => r.label === label)
-      .sort((a, b) => a.lastUsed - b.lastUsed);
+      .sort((a, b) => a.lastUsed - b.lastUsed || a.usageOrder - b.usageOrder);
     while (ofLabel.length > MAX_RESOURCES_PER_LABEL) {
       const victim = ofLabel.shift();
       if (!victim) break;
@@ -169,7 +176,7 @@ class MemoryManager {
       byLabel.set(r.label, arr);
     }
     for (const arr of byLabel.values()) {
-      arr.sort((a, b) => b.lastUsed - a.lastUsed);
+      arr.sort((a, b) => b.lastUsed - a.lastUsed || b.usageOrder - a.usageOrder);
       for (const victim of arr.slice(2)) await this.dispose(victim.id);
     }
   }

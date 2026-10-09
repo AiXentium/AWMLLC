@@ -295,6 +295,25 @@ describe("heap-pressure eviction", () => {
     expect(calls.sort()).toEqual(["pdf-1", "pdf-2", "pdf-3"]);
   });
 
+  it("touching older resources at the same timestamp makes them most recent", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(1_000);
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    Object.defineProperty(performance, "memory", {
+      value: { usedJSHeapSize: 850, jsHeapSizeLimit: 1000 },
+      configurable: true,
+    });
+    const calls: string[] = [];
+    for (let i = 1; i <= 5; i++) {
+      memoryManager.register(`pdf-${i}`, makeDispose(`pdf-${i}`, calls), { label: LABEL });
+    }
+    memoryManager.touch("pdf-1");
+    memoryManager.touch("pdf-2");
+    await checkPressure();
+    expect(calls.sort()).toEqual(["pdf-3", "pdf-4", "pdf-5"]);
+    expect(memoryManager.stats().total).toBe(2);
+  });
+
   it("below 80% heap usage nothing is evicted", async () => {
     const calls: string[] = [];
     vi.spyOn(console, "warn").mockImplementation(() => undefined);

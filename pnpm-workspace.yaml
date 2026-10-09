@@ -1,6 +1,16 @@
 packages:
   - "."
 
-allowBuilds:
-  core-js: set this to true or false
-  esbuild: set this to true or false
+onlyBuiltDependencies:
+  - esbuild
+  - workerd
+
+ignoredBuiltDependencies:
+  - core-js
+  - tesseract.js
+
+# Patched transitive versions; validate Excel export and the MCP/Vite build.
+overrides:
+  exceljs>uuid: ^11.1.1
+  "@lovable.dev/mcp-js>esbuild": ^0.28.1
+  "@lovable.dev/mcp-js>@modelcontextprotocol/sdk": ^1.31.0

@@ -5,9 +5,7 @@ import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 
 // The MCP plugin's configResolved hook is wrapped for Windows path normalization.
 // Typed precisely instead of `any`: Vite's Plugin configResolved hook shape.
-const mcp = mcpPlugin() as unknown as {
-  configResolved?: Plugin["configResolved"];
-};
+const mcp = mcpPlugin() as unknown as Plugin;
 
 if (process.platform === "win32" && mcp.configResolved) {
   const originalConfigResolved = mcp.configResolved;
@@ -30,6 +28,10 @@ if (process.platform === "win32" && mcp.configResolved) {
 
 export default defineConfig({
   plugins: [mcp],
+  nitro: {
+    preset: "cloudflare-module",
+    cloudflare: { nodeCompat: true, deployConfig: false },
+  },
   tanstackStart: {
     server: { entry: "server" },
   },

@@ -1,0 +1,35 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "awmllc",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2026-10-06",
+  "compatibility_flags": ["nodejs_compat"],
+  "no_bundle": true,
+  "keep_vars": true,
+  "build": {
+    "command": "npm run build"
+  },
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".output/public"
+  },
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": ["**/*.mjs", "**/*.js"]
+    }
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "SUPABASE_URL": "https://gykyusczrrqkkfuktukc.supabase.co",
+    "PGHOST": "db.gykyusczrrqkkfuktukc.supabase.co",
+    "PGPORT": "5432",
+    "PGDATABASE": "postgres",
+    "PGUSER": "postgres"
+  },
+  "secrets": {
+    "required": ["SUPABASE_PUBLISHABLE_KEY", "SUPABASE_SERVICE_ROLE_KEY"]
+  }
+}
