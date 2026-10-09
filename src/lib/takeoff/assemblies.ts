@@ -17,6 +17,7 @@
  * No AI arithmetic anywhere — the estimator's rates in, deterministic math out.
  */
 import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
 
 export type AssemblyLineKind = "material" | "labor";
 
@@ -32,6 +33,17 @@ export interface AssemblyLine {
   waste_pct: number;
   basis?: AssemblyLineBasis;
 }
+
+const assemblyLinesSchema = z.array(
+  z.object({
+    kind: z.enum(["material", "labor"]),
+    description: z.string(),
+    qty_per_unit: z.number().finite(),
+    unit: z.string(),
+    waste_pct: z.number().finite(),
+    basis: z.enum(["area", "perimeter"]).optional(),
+  }),
+);
 
 export interface Assembly {
   id: string;
@@ -80,9 +92,9 @@ export async function fetchAssemblies(category: string): Promise<Assembly[]> {
     .is("org_id", null)
     .order("created_at", { ascending: true });
   if (error) throw error;
-  return ((data ?? []) as Assembly[]).map((a) => ({
+  return (data ?? []).map((a) => ({
     ...a,
-    lines: Array.isArray(a.lines) ? (a.lines as AssemblyLine[]) : [],
+    lines: assemblyLinesSchema.parse(a.lines),
   }));
 }
 

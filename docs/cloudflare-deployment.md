@@ -47,9 +47,9 @@ The runtime `SUPABASE_URL` and nonsecret PostgreSQL settings are declared in
 `wrangler.json`. These values use project `gykyusczrrqkkfuktukc`, supplied by
 the project owner. Confirm that the publishable and service-role keys belong to
 that project and that its application tables/storage policies are provisioned.
-This repository's older `supabase/config.toml` references another project;
-do not run its remote migrations without explicitly selecting the intended
-project and authorizing the database changes.
+The Supabase CLI configuration and database scripts explicitly select this
+project. Follow [Supabase setup](supabase-setup.md) to provision its database,
+private storage and production authentication settings.
 
 Optional features require additional **runtime** secrets/settings:
 
@@ -69,6 +69,35 @@ Never commit actual values in `.env`, `.dev.vars`, scripts, or configuration.
 Paid OCR currently uses optional client-side `VITE_GOOGLE_DOCAI_*` or
 `VITE_AZURE_DOCINTEL_*` settings; only use restricted browser-appropriate keys
 if deliberately enabling those providers.
+
+## Deploy from Codex or a shell
+
+Cloudflare build settings do not populate the Codex process environment.
+For deployment here, securely provide `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID` in this Codex environment, then check
+`pnpm exec wrangler whoami`. The token needs access to the intended account's
+Workers scripts and deployments. A token rolled in Cloudflare must also be
+updated wherever the old token was stored.
+
+If the required runtime secrets already exist in the Worker dashboard, run
+`pnpm run deploy`. Its environment check requires the public build key and
+Wrangler compiles the configured server entry before uploading.
+
+To upload the two Supabase runtime keys from a directly bound environment
+and deploy together, run:
+
+```sh
+pnpm run deploy:configured -- --check
+pnpm run deploy:configured
+```
+
+This command sends encrypted Worker secrets through stdin, without placing
+their values in a file or command arguments. It preserves other Worker secrets.
+It requires a real server key; a Codex proxy placeholder cannot be copied into
+Cloudflare as a working secret. For proxy-delivered keys, use Cloudflare's
+dashboard secret entry and the normal deploy command. Optional `SITE_URL` sets
+the production HTTPS origin for server redirects and lead links. Deployment
+credentials stay in the deploying process and are not uploaded to the Worker.
 
 ## Validate before deployment
 

@@ -109,7 +109,7 @@ function TakeoffLoginPage() {
     if (signInError) {
       setError(
         signInError.message === "Invalid login credentials"
-          ? "Those credentials weren't recognized. AWM Takeoff AI is invitation-only at go-live; for demo access use one of the listed workspace accounts."
+          ? "Those credentials weren't recognized. Ask your workspace administrator for an invitation or reset your password."
           : signInError.message,
       );
       return;
@@ -285,14 +285,12 @@ function TakeoffLoginPage() {
           </form>
 
           <div className="mt-8 rounded-md border border-dashed border-border bg-secondary/55 p-4 text-sm leading-relaxed text-muted-foreground">
-            <p className="font-semibold uppercase tracking-[0.14em] text-bronze">Demo access</p>
-            <div className="mt-2 space-y-1">
-              <p>demo@awmllc.com — Owner / Admin</p>
-              <p>estimator@awmllc.com — Estimator</p>
-              <p>reviewer@awmllc.com — Reviewer</p>
-              <p>viewer@awmllc.com — Viewer</p>
-              <p className="pt-1">Password for all demo accounts: AWMdemo2026!</p>
-            </div>
+            <p className="font-semibold uppercase tracking-[0.14em] text-bronze">
+              Workspace access
+            </p>
+            <p className="mt-2">
+              Access is invitation-only. Use the account provided by your workspace administrator.
+            </p>
           </div>
 
           <div className="mt-8 grid gap-3">

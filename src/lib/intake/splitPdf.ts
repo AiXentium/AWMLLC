@@ -59,7 +59,9 @@ export async function splitPdfIfNeeded(file: File): Promise<File[]> {
 
     if (!chunkBytes) break; // safety — should not happen
     parts.push(
-      new File([chunkBytes], `${baseName}.part${partNum}.pdf`, { type: "application/pdf" }),
+      new File([new Uint8Array(chunkBytes)], `${baseName}.part${partNum}.pdf`, {
+        type: "application/pdf",
+      }),
     );
     start = end;
     partNum++;

@@ -15,6 +15,28 @@
 --    without recursive self-referencing subqueries, which Postgres rejects
 --    as infinite recursion). Defined up-front because policies below use them.
 -- ----------------------------------------------------------------------------
+-- Tables must exist before SQL-language membership helpers are parsed.
+CREATE TABLE IF NOT EXISTS public.orgs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  slug text UNIQUE,
+  branding jsonb NOT NULL DEFAULT '{}'::jsonb,
+  plan text NOT NULL DEFAULT 'trial',
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS public.org_members (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id uuid NOT NULL REFERENCES public.orgs(id) ON DELETE CASCADE,
+  user_id uuid NOT NULL,
+  role text NOT NULL DEFAULT 'estimator',
+  created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (org_id, user_id)
+);
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.orgs, public.org_members TO authenticated;
+GRANT ALL ON public.orgs, public.org_members TO service_role;
+ALTER TABLE public.orgs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.org_members ENABLE ROW LEVEL SECURITY;
+
 CREATE OR REPLACE FUNCTION public.is_org_member(p_org_id uuid)
 RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT EXISTS (SELECT 1 FROM public.org_members WHERE org_id = p_org_id AND user_id = auth.uid());
@@ -144,26 +166,6 @@ CREATE TRIGGER t_bids_updated BEFORE UPDATE ON public.bids
 -- ----------------------------------------------------------------------------
 -- 6. Multi-tenancy: orgs + org_members
 -- ----------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS public.orgs (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name text NOT NULL,
-  slug text UNIQUE,
-  branding jsonb NOT NULL DEFAULT '{}'::jsonb,
-  plan text NOT NULL DEFAULT 'trial',
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-CREATE TABLE IF NOT EXISTS public.org_members (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  org_id uuid NOT NULL REFERENCES public.orgs(id) ON DELETE CASCADE,
-  user_id uuid NOT NULL,
-  role text NOT NULL DEFAULT 'estimator',
-  created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (org_id, user_id)
-);
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.orgs, public.org_members TO authenticated;
-GRANT ALL ON public.orgs, public.org_members TO service_role;
-ALTER TABLE public.orgs ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.org_members ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "orgs read" ON public.orgs FOR SELECT TO authenticated
   USING (public.is_org_member(orgs.id));
 CREATE POLICY "orgs insert" ON public.orgs FOR INSERT TO authenticated

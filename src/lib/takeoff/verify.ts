@@ -12,6 +12,7 @@
  * viewing an item never counts as reviewing it.
  */
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesUpdate } from "@/integrations/supabase/types";
 import { logAudit } from "@/lib/audit";
 
 export type VerifyStatus = "pending" | "review" | "approved" | "rejected";
@@ -28,7 +29,7 @@ export async function setItemStatus(
   status: VerifyStatus,
   opts: { actor?: string; note?: string; overrideReason?: string } = {},
 ): Promise<void> {
-  const patch: Record<string, unknown> = { status };
+  const patch: TablesUpdate<"takeoff_items"> = { status };
   if (status === "approved") {
     patch.verified_by = verifiedBy(opts.actor);
     patch.verified_at = new Date().toISOString();
@@ -63,7 +64,7 @@ export async function bulkSetStatus(
   opts: { actor?: string; note?: string } = {},
 ): Promise<number> {
   if (!itemIds.length) return 0;
-  const patch: Record<string, unknown> = { status };
+  const patch: TablesUpdate<"takeoff_items"> = { status };
   if (status === "approved") {
     patch.verified_by = verifiedBy(opts.actor);
     patch.verified_at = new Date().toISOString();

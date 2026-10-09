@@ -44,8 +44,8 @@ function ResetPasswordPage() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    if (password.length < 8) {
-      setError("Use at least 8 characters.");
+    if (password.length < 12) {
+      setError("Use at least 12 characters.");
       return;
     }
     if (password !== confirm) {
@@ -95,6 +95,7 @@ function ResetPasswordPage() {
             <Input
               id="new-password"
               type="password"
+              minLength={12}
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

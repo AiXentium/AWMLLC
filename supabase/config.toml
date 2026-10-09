@@ -1,1 +1,14 @@
-project_id = "aykvxycasuwnpavcunvb"
+project_id = "gykyusczrrqkkfuktukc"
+
+[auth]
+# Local development only; hosted site/redirect URLs are configured separately.
+site_url = "http://127.0.0.1:8080"
+additional_redirect_urls = ["http://127.0.0.1:8080/reset-password", "http://localhost:8080/reset-password"]
+enable_signup = false
+minimum_password_length = 12
+
+[auth.email]
+enable_signup = false
+enable_confirmations = true
+double_confirm_changes = true
+secure_password_change = true

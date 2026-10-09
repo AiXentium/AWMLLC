@@ -6,7 +6,6 @@
 import * as pdfjs from "pdfjs-dist";
 
 // Use the bundled worker from the installed pdfjs-dist package.
-// @ts-expect-error — pdfjs-dist exposes the worker entry without types here
 import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
 let workerConfigured = false;
@@ -37,7 +36,7 @@ export async function extractPdfTextSample(file: File, maxPages = 3): Promise<Pd
     const page = await pdf.getPage(n);
     const content = await page.getTextContent();
     const text = content.items
-      .map((item) => (typeof item.str === "string" ? item.str : ""))
+      .map((item) => ("str" in item ? item.str : ""))
       .join(" ")
       .replace(/\s+/g, " ")
       .trim()

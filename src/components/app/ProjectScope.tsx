@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ScopeProject, useProjectScope } from "./ProjectScope.hooks";
+export type { ScopeProject } from "./ProjectScope.hooks";
 
 export function ProjectPicker({
   projects,

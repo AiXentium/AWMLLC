@@ -4,6 +4,7 @@ packages:
 onlyBuiltDependencies:
   - esbuild
   - workerd
+  - supabase
 
 ignoredBuiltDependencies:
   - core-js

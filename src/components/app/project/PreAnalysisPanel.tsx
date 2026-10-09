@@ -221,9 +221,7 @@ export function PreAnalysisPanel({
     return () => window.clearInterval(id);
   }, [busy]);
   const stalled =
-    busy &&
-    Boolean(runRow?.updated_at) &&
-    nowTick - new Date(runRow.updated_at as string).getTime() > STALLED_MS;
+    busy && !!runRow?.updated_at && nowTick - new Date(runRow.updated_at).getTime() > STALLED_MS;
 
   const { data: sheets = [] } = useQuery({
     queryKey: ["plan-analysis-sheets", projectId, runId],

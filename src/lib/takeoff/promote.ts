@@ -14,6 +14,7 @@
  *   schedule_entry_id on the takeoff item notes... via source ref).
  */
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesInsert } from "@/integrations/supabase/types";
 import { parseSizePair } from "./dimensions";
 import { logAudit } from "@/lib/audit";
 
@@ -78,7 +79,7 @@ export async function promoteScheduleEntries(
   );
 
   const result: PromotionResult = { promoted: 0, skipped: 0, unsized: 0, itemIds: [] };
-  const rows: Record<string, unknown>[] = [];
+  const rows: TablesInsert<"takeoff_items">[] = [];
 
   for (const e of (entries ?? []) as ScheduleEntry[]) {
     if (promotedIds.has(e.id.toLowerCase())) {

@@ -16,6 +16,7 @@
  * source 'plan_search', idempotent via the notes ref.
  */
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesInsert } from "@/integrations/supabase/types";
 import { parseSizePair } from "./dimensions";
 import { logAudit } from "@/lib/audit";
 
@@ -176,7 +177,7 @@ export async function convertAutoMarksToTakeoff(
 ): Promise<PlanSearchConversion> {
   const done = await alreadyConvertedRefs(projectId);
   const result: PlanSearchConversion = { promoted: 0, skipped: 0, itemIds: [] };
-  const rows: Record<string, unknown>[] = [];
+  const rows: TablesInsert<"takeoff_items">[] = [];
 
   for (const m of marks) {
     const ref = `auto:${m.id}`;
@@ -236,7 +237,7 @@ export async function convertManualHitsToTakeoff(
 ): Promise<PlanSearchConversion> {
   const done = await alreadyConvertedRefs(projectId);
   const result: PlanSearchConversion = { promoted: 0, skipped: 0, itemIds: [] };
-  const rows: Record<string, unknown>[] = [];
+  const rows: TablesInsert<"takeoff_items">[] = [];
 
   for (const h of hits) {
     const ref = `manual:${tag.toLowerCase()}:${h.sheetId}`;
